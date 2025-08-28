@@ -31,16 +31,13 @@ jobs:
     - name: Build and Test with Maven
       run: mvn clean package -DskipTests=false
     
-    - name: SonarQube Scan
-      uses: SonarSource/sonarqube-scan-action@v5.2.0
-      with:
-        projectBaseDir: .
-        args: >
-          -Dsonar.projectKey="ecommerce_app_petey_amru"
-          -Dsonar.java.binaries=target/classes
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    - name: SonarQube Analysis with Quality Gate Check
+      run: |
+        mvn sonar:sonar \
+          -Dsonar.projectKey="ecommerce_app_petey_amru" \
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.qualitygate.wait=true
    
     - name: Rename JAR with version
       run: |
