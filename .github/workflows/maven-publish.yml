@@ -28,13 +28,6 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Generated version: $VERSION"
 
-    - name: Generate version
-      id: version
-      run: |
-        VERSION="1.0.${{ github.run_number }}"
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Generated version: $VERSION"
-
     - name: Build and Test with Maven
       run: mvn clean package -DskipTests=false
     
@@ -48,22 +41,7 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-    - name: Log in to GitHub container registry
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.CR_PAT }}
-
-    - name: Build Docker image
-      run: |
-        docker build -t ghcr.io/nobleprog-training/ecommerce-app-plan:${{ github.sha }} .
-
-    - name: Push Docker image
-      run: |
-        docker push ghcr.io/nobleprog-training/ecommerce-app-plan:${{ github.sha }}
-      
+   
     - name: Rename JAR with version
       run: |
         cp target/ecommerce-app-1.0-SNAPSHOT.jar target/ecommerce-app-${{ steps.version.outputs.version }}.jar
