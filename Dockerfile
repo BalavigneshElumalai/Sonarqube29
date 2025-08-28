@@ -1,6 +1,8 @@
 # Use the official Maven image as the base image
 FROM maven:3.9.9-eclipse-temurin-21
 
+LABEL maintainer="saurabh@uptut.com"
+
 # Set the working directory inside the container
 WORKDIR /app
 
