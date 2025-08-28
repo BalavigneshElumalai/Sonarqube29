@@ -1,0 +1,76 @@
+name: Build and Test Java App
+permissions:
+  contents: read
+  actions: write
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-test-scan-publish:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+    
+    - name: Generate version
+      id: version
+      run: |
+        VERSION="1.0.${{ github.run_number }}"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Generated version: $VERSION"
+
+    - name: Generate version
+      id: version
+      run: |
+        VERSION="1.0.${{ github.run_number }}"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Generated version: $VERSION"
+
+    - name: Build and Test with Maven
+      run: mvn clean package -DskipTests=false
+    
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v5.2.0
+      with:
+        projectBaseDir: .
+        args: >
+          -Dsonar.projectKey="ecommerce_app_petey_amru"
+          -Dsonar.java.binaries=target/classes
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    - name: Log in to GitHub container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.CR_PAT }}
+
+    - name: Build Docker image
+      run: |
+        docker build -t ghcr.io/nobleprog-training/ecommerce-app-plan:${{ github.sha }} .
+
+    - name: Push Docker image
+      run: |
+        docker push ghcr.io/nobleprog-training/ecommerce-app-plan:${{ github.sha }}
+      
+    - name: Rename JAR with version
+      run: |
+        cp target/ecommerce-app-1.0-SNAPSHOT.jar target/ecommerce-app-${{ steps.version.outputs.version }}.jar
+
+    - name: Upload JAR as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ecommerce-app-${{ steps.version.outputs.version }}
+        path: target/ecommerce-app-${{ steps.version.outputs.version }}.jar
+        retention-days: 30
