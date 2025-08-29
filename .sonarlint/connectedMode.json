@@ -1,4 +1,4 @@
 {
-    "sonarQubeUri": "http://172.173.228.160:9000",
-    "projectKey": "ecommerce_app_petey_amru"
+    "sonarQubeUri": "http://localhost:9000",
+    "projectKey": "ecommerce-java-project"
 }
