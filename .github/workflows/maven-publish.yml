@@ -34,7 +34,7 @@ jobs:
     - name: SonarQube Analysis with Quality Gate Check
       run: |
         mvn sonar:sonar \
-          -Dsonar.projectKey="ecommerce_app_petey_amru" \
+          -Dsonar.projectKey="ecommerce_app_petey_amru_test2" \
           -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
           -Dsonar.qualitygate.wait=true \
