@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/web/products")
@@ -24,6 +25,24 @@ public class ProductWebController {
 
     @PostMapping
     public String createProduct(@ModelAttribute Product product, RedirectAttributes redirectAttributes) {
+        // Duplicate validation logic - security hotspot (same as ProductController)
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product name cannot be empty");
+            return "redirect:/web/products";
+        }
+        if (product.getPrice() <= 0.0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product price must be greater than 0");
+            return "redirect:/web/products";
+        }
+        if (product.getName().length() > 100) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product name cannot exceed 100 characters");
+            return "redirect:/web/products";
+        }
+        if (product.getPrice() > 999999.99) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product price cannot exceed 999999.99");
+            return "redirect:/web/products";
+        }
+        
         productRepository.save(product);
         redirectAttributes.addFlashAttribute("successMessage", "Product created successfully!");
         return "redirect:/web/products";
@@ -37,6 +56,24 @@ public class ProductWebController {
 
     @PostMapping("/update/{id}")
     public String updateProduct(@PathVariable Long id, @ModelAttribute Product product, RedirectAttributes redirectAttributes) {
+        // Duplicate validation logic - security hotspot (same as createProduct)
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product name cannot be empty");
+            return "redirect:/web/products";
+        }
+        if (product.getPrice() <= 0.0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product price must be greater than 0");
+            return "redirect:/web/products";
+        }
+        if (product.getName().length() > 100) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product name cannot exceed 100 characters");
+            return "redirect:/web/products";
+        }
+        if (product.getPrice() > 999999.99) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Product price cannot exceed 999999.99");
+            return "redirect:/web/products";
+        }
+        
         Product existingProduct = productRepository.findById(id).orElseThrow();
         existingProduct.setName(product.getName());
         existingProduct.setDescription(product.getDescription());
