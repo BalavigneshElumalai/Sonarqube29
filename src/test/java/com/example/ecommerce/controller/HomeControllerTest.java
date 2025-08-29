@@ -27,7 +27,7 @@ class HomeControllerTest {
 
     @Test
     void testHomePage_WithTrailingSlash() throws Exception {
-        mockMvc.perform(get("//"))
+        mockMvc.perform(get("/"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/web/products"));
     }

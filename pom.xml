@@ -87,6 +87,16 @@
           <goals>
             <goal>prepare-agent</goal>
           </goals>
+          <configuration>
+            <excludes>
+              <exclude>**/module-info.class</exclude>
+              <exclude>**/META-INF/**</exclude>
+              <exclude>**/sun/**</exclude>
+              <exclude>**/com/sun/**</exclude>
+              <exclude>**/java/**</exclude>
+              <exclude>**/jakarta/**</exclude>
+            </excludes>
+          </configuration>
         </execution>
         <execution>
           <id>report</id>
