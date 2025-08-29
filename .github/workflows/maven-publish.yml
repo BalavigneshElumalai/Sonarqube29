@@ -37,7 +37,8 @@ jobs:
           -Dsonar.projectKey="ecommerce_app_petey_amru" \
           -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-          -Dsonar.qualitygate.wait=true
+          -Dsonar.qualitygate.wait=true \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
    
     - name: Rename JAR with version
       run: |
